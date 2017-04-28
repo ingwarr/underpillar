@@ -16,4 +16,4 @@ There is possible to use dnsmasq or neutron as a PXE provider.
     export IRONIC_DHCP_POOL_START=10.0.175.100
     export IRONIC_DHCP_POOL_END=10.0.175.200
 
-    curl https://raw.githubusercontent.com/ingwarr/underpillar/master/bootstrap.sh | bash
+    curl https://raw.githubusercontent.com/ingwarr/underpillar/master/bootstrap.sh -o ./bootstrap.sh && bash ./bootstrap.sh
