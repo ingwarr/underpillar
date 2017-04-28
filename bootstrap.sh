@@ -9,9 +9,12 @@ IRONIC_DHCP_POOL_START=${IRONIC_DHCP_POOL_START:-'10.0.175.100'}
 IRONIC_DHCP_POOL_END=${IRONIC_DHCP_POOL_END:-'10.0.175.200'}
 IRONIC_DHCP_POOL_NETMASK=${IRONIC_DHCP_POOL_NETMASK:-'255.255.255.0'}
 IRONIC_DHCP_POOL_NETMASK_PREFIX=${IRONIC_DHCP_POOL_NETMASK_PREFIX:-'24'}
+DNSMASQ_USE_EXTERNAL_DNS=${DNSMASQ_USE_EXTERNAL_DNS:=true}
 
 # Enable keystone for ironic if used with neutron
 IRONIC_ENABLE_KEYSTONE=false && [[ ${IRONIC_PXE_MANAGER}=~neutron ]] && IRONIC_ENABLE_KEYSTONE=true
+# Inverse flag for dnsmasq config
+DNSMASQ_DONT_USE_EXTERNAL_DNS=false && [[ ${DNSMASQ_USE_EXTERNAL_DNS}=~false ]] && DNSMASQ_DONT_USE_EXTERNAL_DNS=true
 
 wget -O - https://repo.saltstack.com/apt/ubuntu/16.04/amd64/latest/SALTSTACK-GPG-KEY.pub | sudo apt-key add -
 sudo echo "deb http://repo.saltstack.com/apt/ubuntu/16.04/amd64/latest xenial main" >>  /etc/apt/sources.list.d/saltstack.list
@@ -61,5 +64,6 @@ find /srv/pillar/ -type f -exec sed -i "s/==IRONIC_DHCP_POOL_END==/${IRONIC_DHCP
 find /srv/pillar/ -type f -exec sed -i "s/==IRONIC_DHCP_POOL_NETMASK==/${IRONIC_DHCP_POOL_NETMASK}/g" {} +
 find /srv/pillar/ -type f -exec sed -i "s/==IRONIC_DHCP_POOL_NETMASK_PREFIX==/${IRONIC_DHCP_POOL_NETMASK_PREFIX}/g" {} +
 find /srv/pillar/ -type f -exec sed -i "s/==IRONIC_ENABLE_KEYSTONE==/${IRONIC_ENABLE_KEYSTONE}/g" {} +
+find /srv/pillar/ -type f -exec sed -i "s/==DNSMASQ_DONT_USE_EXTERNAL_DNS==/${DNSMASQ_DONT_USE_EXTERNAL_DNS}/g" {} +
 
 sudo salt-call --local  --state-output=mixed state.highstate

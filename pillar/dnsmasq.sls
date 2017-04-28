@@ -1,7 +1,7 @@
 dnsmasq:
   server:
     enabled: true
-    disable_dnsmasq_dns: true
+    disable_dnsmasq_dns: ==DNSMASQ_DONT_USE_EXTERNAL_DNS==
     inventory_dhcp: false
     testing: false
     local_address: ==IRONIC_PXE_INTERFACE_ADDRESS==
