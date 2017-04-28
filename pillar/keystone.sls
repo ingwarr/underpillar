@@ -74,14 +74,14 @@ keystone:
             description: OpenStack Identity Service v3
             endpoints:
             - region: RegionOne
-              public_address: keystone
+              public_address: 127.0.0.1
               public_protocol: http
               public_port: 5000
               public_path: '/v3'
-              internal_address: keystone
+              internal_address: 127.0.0.1
               internal_port: 5000
               internal_path: '/v3'
-              admin_address: keystone
+              admin_address: 127.0.0.1
               admin_port: 35357
               admin_path: '/v3'
           keystone:
@@ -89,14 +89,14 @@ keystone:
             description: OpenStack Identity Service
             endpoints:
             - region: RegionOne
-              public_address: keystone
+              public_address: 127.0.0.1
               public_protocol: http
               public_port: 5000
               public_path: '/v2.0'
-              internal_address: keystone
+              internal_address: 127.0.0.1
               internal_port: 5000
               internal_path: '/v2.0'
-              admin_address: keystone
+              admin_address: 127.0.0.1
               admin_port: 35357
               admin_path: '/v2.0'
 
@@ -112,13 +112,13 @@ keystone:
             description: OpenStack Networking Service
             endpoints:
             - region: RegionOne
-              public_address: keystone
+              public_address: 127.0.0.1
               public_port: 9696
               public_path: '/'
-              internal_address: keystone
+              internal_address: 127.0.0.1
               internal_port: 9696
               internal_path: '/'
-              admin_address: keystone
+              admin_address: 127.0.0.1
               admin_port: 9696
               admin_path: '/'
 
@@ -127,13 +127,13 @@ keystone:
             description: OpenStack Baremetal Provision Service
             endpoints:
             - region: RegionOne
-              public_address: keystone
+              public_address: 127.0.0.1
               public_port: 6385
               public_path: '/'
-              internal_address: keystone
+              internal_address: 127.0.0.1
               internal_port: 6385
               internal_path: '/'
-              admin_address: keystone
+              admin_address: 127.0.0.1
               admin_port: 6385
               admin_path: '/'
 
@@ -143,14 +143,14 @@ keystone:
             #description: OpenStack Identity Service v3
             #endpoints:
             #- region: RegionTwo
-              #public_address: keystone
+              #public_address: 127.0.0.1
               #public_protocol: http
               #public_port: 5000
               #public_path: '/v3'
-              #internal_address: keystone
+              #internal_address: 127.0.0.1
               #internal_port: 5000
               #internal_path: '/v3'
-              #admin_address: keystone
+              #admin_address: 127.0.0.1
               #admin_port: 35357
               #admin_path: '/v3'
           #keystone:
@@ -159,14 +159,14 @@ keystone:
             #description: OpenStack Identity Service
             #endpoints:
             #- region: RegionTwo
-              #public_address: keystone
+              #public_address: 127.0.0.1
               #public_protocol: http
               #public_port: 5000
               #public_path: '/v2.0'
-              #internal_address: keystone
+              #internal_address: 127.0.0.1
               #internal_port: 5000
               #internal_path: '/v2.0'
-              #admin_address: keystone
+              #admin_address: 127.0.0.1
               #admin_port: 35357
               #admin_path: '/v2.0'
 # CI related dependencies
@@ -196,33 +196,3 @@ apache:
       - apache2
     modules:
       - wsgi
-mysql:
-  client:
-    enabled: true
-    version: '5.7'
-    admin:
-      host: localhost
-      port: 3306
-      user: admin
-      password: password
-      encoding: utf8
-  server:
-    enabled: true
-    version: "5.7"
-    force_encoding: utf8
-    bind:
-      address: 0.0.0.0
-      port: 3306
-      protocol: tcp
-    database:
-      keystone:
-        encoding: utf8
-        users:
-        - host: '%'
-          name: keystone
-          password: passw0rd
-          rights: all
-        - host: 127.0.0.1
-          name: keystone
-          password: passw0rd
-          rights: all

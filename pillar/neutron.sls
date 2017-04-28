@@ -4,7 +4,7 @@ neutron:
     debug: true
     provision_address: 10.0.175.1
     provision_netmask: 24
-    provision_interface: ens7
+    provision_interface: ==IRONIC_PXE_INTERFACE==
     file_url_port: 8080
     bridge_name: brbm
     inspector_range:
