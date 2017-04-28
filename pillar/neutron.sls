@@ -2,15 +2,15 @@ neutron:
   underlay:
     enabled: true
     debug: true
-    provision_address: 10.0.175.1
-    provision_netmask: 24
-    provision_interface: ens7
+    provision_address: ==IRONIC_PXE_INTERFACE_ADDRESS==
+    provision_netmask: ==IRONIC_DHCP_POOL_NETMASK_PREFIX==
+    provision_interface: ==IRONIC_PXE_INTERFACE_NAME==
     file_url_port: 8080
     bridge_name: brbm
     inspector_range:
-      start: 10.0.175.10
-      end: 10.0.175.100
-      prefix: 24
+      start: ==IRONIC_DHCP_POOL_START==
+      end: ==IRONIC_DHCP_POOL_END==
+      prefix: ==IRONIC_DHCP_POOL_NETMASK_PREFIX==
     database:
       engine: mysql
       host: keystone
