@@ -13,7 +13,7 @@ ironic:
       name: ironic
       user: ironic
       password: password
-    enable_keystone: true
+    enable_keystone: ==IRONIC_ENABLE_KEYSTONE==
     identity:
       engine: keystone
       region: RegionOne
