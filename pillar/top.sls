@@ -1,9 +1,8 @@
 base:
   '*':
-    - nettools
-    - nginx
-    - mysql
     - rabbitmq
+    - mysql
+    - nginx
     - ironic
-    - tftpd
     - dnsmasq
+    - tftpd
