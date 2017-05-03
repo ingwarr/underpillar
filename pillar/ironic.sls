@@ -6,6 +6,7 @@ ironic:
     enabled_drivers: pxe_ipmitool,agent_ipmitool,agent_ssh,pxe_ssh
     deployment_address: ==IRONIC_PXE_INTERFACE_ADDRESS==
     file_url_port: 8080
+    ipxe_boot_script: /tftpboot/boot.ipxe
     database:
       engine: mysql
       host: localhost
