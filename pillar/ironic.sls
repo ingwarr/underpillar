@@ -24,7 +24,7 @@ ironic:
       password: password
       tenant: service
     bind:
-      address: 0.0.0.0
+      address: ==IRONIC_PXE_INTERFACE_ADDRESS==
       port: 6385
     message_queue:
       engine: rabbitmq
@@ -39,7 +39,7 @@ ironic:
     http_boot_folder: /httpboot
     enable_cors: false
     tftp:
-      host: 0.0.0.0
+      host: ==IRONIC_PXE_INTERFACE_ADDRESS==
       boot_directory: /tftpboot
     drivers:
       - engine: pxe_ipmitool
