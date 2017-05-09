@@ -24,7 +24,8 @@ ironic:
       password: password
       tenant: service
     bind:
-      address: ==IRONIC_PXE_INTERFACE_ADDRESS==
+      address: 0.0.0.0
+      api_url_address: ==IRONIC_PXE_INTERFACE_ADDRESS==
       port: 6385
     message_queue:
       engine: rabbitmq
