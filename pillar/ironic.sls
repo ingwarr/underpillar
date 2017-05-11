@@ -36,6 +36,7 @@ ironic:
       virtual_host: '/openstack'
     dhcp_provider: none
     ipxe_enabled: true
+    automated_clean: 'false'
     webserver_use: true
     http_boot_folder: /httpboot
     enable_cors: false

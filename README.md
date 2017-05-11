@@ -82,7 +82,7 @@ The label of the configdrive image should be 'cidata'.
 Example content for 'meta-data' file:
 
     instance-id: iid-local1
-    hostname: slave01.example.local
+    local-hostname: slave01.example.local
 
 Example content for 'user-data' file:
 
