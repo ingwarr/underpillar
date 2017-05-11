@@ -22,10 +22,10 @@ sudo echo "deb http://repo.saltstack.com/apt/ubuntu/16.04/amd64/latest xenial ma
 
 # Install ironic from Newton release
 wget -O - http://mirror.fuel-infra.org/mcp-repos/newton/xenial/archive-mcpnewton.key | sudo apt-key add -
-sudo echo “deb http://mirror.fuel-infra.org/mcp-repos/newton/xenial newton main” > /etc/apt/sources.list.d/ironic.list
+sudo echo "deb http://mirror.fuel-infra.org/mcp-repos/newton/xenial newton main" > /etc/apt/sources.list.d/ironic.list
 
 sudo apt-get update
-sudo apt-get install salt-minion
+sudo apt-get install -y salt-minion
 
 WORKDIR=$(pwd)
 
