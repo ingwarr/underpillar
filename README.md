@@ -1,5 +1,5 @@
 Install standalone ironic using salt-minion
--------------------------------------------
+===========================================
 
 
 Assume that 'ens4' is the interface connected to the PXE network, which
@@ -21,7 +21,7 @@ There is possible to use dnsmasq or neutron as a PXE provider.
 
 
 Use standalone ironic to provision a cloudinit-based image without metadata server
-----------------------------------------------------------------------------------
+==================================================================================
 
 Usually, cloudinit-based images are used to spawn instances in aws, openstack
 and other clouds.
@@ -43,7 +43,7 @@ What we need here:
   be used for booting with PXE.
 
 Build ironic-agent image
-========================
+------------------------
 
     # Clone the agent repository and switch to Newton release
     git clone https://git.openstack.org/openstack/ironic-python-agent
@@ -61,14 +61,14 @@ Build ironic-agent image
     chmod a+r /httpboot/coreos_production_pxe*
 
 Get the cloudinit-based image
-=============================
+-----------------------------
 
     wget https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img -O /httpboot/xenial-server-cloudimg-amd64.qcow2
     # md5 is required for Ironic to check the image after downloading to the target node
     export CLOUDINIT_IMAGE_MD5=`md5sum /httpboot/xenial-server-cloudimg-amd64.qcow2 | awk '{print $1}'`
 
 Build a config-drive image
-==========================
+--------------------------
 
 NoCloud datasource use a very simple structure for configdrive:
 
@@ -123,7 +123,7 @@ Keep in mind that Ironic accepts configdrive image only in the gzipped and base6
 
 
 Add the tagret node to the Ironic
-=================================
+---------------------------------
 
     export OS_AUTH_TOKEN=fake-token
     export IRONIC_URL=http://localhost:6385/
@@ -142,12 +142,12 @@ Add the tagret node to the Ironic
     ironic port-create -n ${IRONIC_NODE_UUID} -a 0c:c4:aa:bb:cc:dd  # MAC address of the node PXE interface
 
 Set the deploy image and run provisioning
-=========================================
+-----------------------------------------
 
     # Add the cloudinit-based image to the node settings
     ironic node-update ${IRONIC_NODE_UUID} add \
         instance_info/root_gb=200 \
-        instance_info/image_source=http://${IRONIC_PXE_INTERFACE_ADDRESS}:8080/xenial-server-cloudimg-amd64-disk1.img \
+        instance_info/image_source=http://${IRONIC_PXE_INTERFACE_ADDRESS}:8080/xenial-server-cloudimg-amd64.qcow2 \
         instance_info/image_checksum=${CLOUDINIT_IMAGE_MD5}
 
     # Validate the node settings for any case
@@ -156,42 +156,45 @@ Set the deploy image and run provisioning
     # Start deploy process
     ironic node-set-provision-state --config-drive=/httpboot/cloud_settings.iso.gz.base64 ${IRONIC_NODE_UUID} active
 
+    # Watch for a few minutes until the node status becomes 'active' with:
+    ironic node-show-states  ${IRONIC_NODE_UUID}
+
 Troubleshooting
-===============
+---------------
 
 * Get the node status and errors. 'deploying' means the process is going, 'active' - process is finished.
   Don't be hurry, the node is rebooting after 'active' status and will not be available for few seconds.
 
-    ironic node-show-states ${IRONIC_NODE_UUID}
+      ironic node-show-states ${IRONIC_NODE_UUID}
 
 * Show all node settings:
 
-    ironic node-show ${IRONIC_NODE_UUID}
+      ironic node-show ${IRONIC_NODE_UUID}
 
 * To reinstall the already provisioned node with the same config, use 'rebuild':
 
-    ironic node-set-provision-state ${IRONIC_NODE_UUID} rebuild
+      ironic node-set-provision-state ${IRONIC_NODE_UUID} rebuild
 
 * If node stucks in wrong condition, it can be re-deployed by changing the provisioning state to 'deleted'
   and re-execute steps from ```Set the deploy image and run provisioning```.
   Wait for state changing to 'available' for several minutes because of reboot/cleaning processes.
 
-    ironic node-set-provision-state ${IRONIC_NODE_UUID} deleted
+      ironic node-set-provision-state ${IRONIC_NODE_UUID} deleted
 
 * If Ironic don't accept changing the states (for example, if node is still in 'clean wait' status),
   the node can be removed from Ironic and re-created again:
 
-    ironic node-set-maintenance ${IRONIC_NODE_UUID} on
-    ironic node-delete ${IRONIC_NODE_UUID}
+      ironic node-set-maintenance ${IRONIC_NODE_UUID} on
+      ironic node-delete ${IRONIC_NODE_UUID}
 
 * More about Ironic node states can be found here:
   https://docs.openstack.org/developer/ironic/dev/states.html
 
 * Automatic node cleaning can be disabled to avoid the following error while setting provision state to 'deleted':
 
-    'Clean step failed: Error performing clean_step erase_devices:
-       No HardwareManager found to handle method:
-         Could not find method: erase_block_device'
+      'Clean step failed: Error performing clean_step erase_devices:
+         No HardwareManager found to handle method:
+           Could not find method: erase_block_device'
 
   To disable automated clean, set automated_clean=false in /etc/ironic/ironic.conf .
 
@@ -200,12 +203,12 @@ Troubleshooting
 
 * Adoption an already deployed node as ready to use without re-deploy:
 
-    # Create node in Ironic and update it with the necessary settings.
-    # Use the following states instead of 'active' to set the node as
-    # ready-to-use instead of starting deploy process
+  Create node in Ironic and update it with the necessary settings.
+  Use the following states instead of 'active' to set the node as
+  ready-to-use instead of starting deploy process.
 
-    ironic node-set-provision-state ${IRONIC_NODE_UUID} manage
-    ironic node-set-provision-state ${IRONIC_NODE_UUID} adopt
+      ironic node-set-provision-state ${IRONIC_NODE_UUID} manage
+      ironic node-set-provision-state ${IRONIC_NODE_UUID} adopt
 
   More about adoption and risks:
   https://docs.openstack.org/developer/ironic/deploy/adoption.html
