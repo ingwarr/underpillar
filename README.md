@@ -15,6 +15,7 @@ There is possible to use dnsmasq or neutron as a PXE provider.
     export IRONIC_PXE_INTERFACE_ADDRESS=10.0.175.2
     export IRONIC_DHCP_POOL_START=10.0.175.100
     export IRONIC_DHCP_POOL_END=10.0.175.200
+    export DNSMASQ_USE_EXTERNAL_DNS=true
 
     curl https://raw.githubusercontent.com/ingwarr/underpillar/master/bootstrap.sh -o ./bootstrap.sh && bash ./bootstrap.sh
 
