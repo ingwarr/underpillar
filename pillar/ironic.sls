@@ -43,5 +43,4 @@ ironic:
       host: ==IRONIC_PXE_INTERFACE_ADDRESS==
       boot_directory: /tftpboot
     drivers:
-      - engine: pxe_ipmitool
       - engine: agent_ipmitool
