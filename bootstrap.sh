@@ -9,13 +9,13 @@ IRONIC_DHCP_POOL_START=${IRONIC_DHCP_POOL_START:-'10.0.175.100'}
 IRONIC_DHCP_POOL_END=${IRONIC_DHCP_POOL_END:-'10.0.175.200'}
 IRONIC_DHCP_POOL_NETMASK=${IRONIC_DHCP_POOL_NETMASK:-'255.255.255.0'}
 IRONIC_DHCP_POOL_NETMASK_PREFIX=${IRONIC_DHCP_POOL_NETMASK_PREFIX:-'24'}
-DNSMASQ_USE_EXTERNAL_DNS=${DNSMASQ_USE_EXTERNAL_DNS:=true}
+DNSMASQ_USE_EXTERNAL_DNS=${DNSMASQ_USE_EXTERNAL_DNS:-true}
 
 # Enable keystone for ironic if used with neutron
-IRONIC_ENABLE_KEYSTONE=false && [[ "${IRONIC_PXE_MANAGER}"=~"neutron" ]] && IRONIC_ENABLE_KEYSTONE=true
+IRONIC_ENABLE_KEYSTONE=false && [[ "${IRONIC_PXE_MANAGER}" == "neutron" ]] && IRONIC_ENABLE_KEYSTONE=true
 
 # Inverse flag for dnsmasq config
-DNSMASQ_DONT_USE_EXTERNAL_DNS=false && [[ ${DNSMASQ_USE_EXTERNAL_DNS}=~false ]] && DNSMASQ_DONT_USE_EXTERNAL_DNS=true
+DNSMASQ_DONT_USE_EXTERNAL_DNS=false && [[ "${DNSMASQ_USE_EXTERNAL_DNS}" == false ]] && DNSMASQ_DONT_USE_EXTERNAL_DNS=true
 
 # Install latest salt
 wget -O - https://repo.saltstack.com/apt/ubuntu/16.04/amd64/latest/SALTSTACK-GPG-KEY.pub | sudo apt-key add -
@@ -28,7 +28,8 @@ sudo echo "deb http://mirror.fuel-infra.org/mcp-repos/newton/xenial newton main"
 sudo apt-get update
 sudo apt-get install -y salt-minion
 
-WORKDIR=$(pwd)
+WORKDIR=${WORKDIR:-'/tmp/'}
+cd ${WORKDIR}
 
 git clone https://github.com/ingwarr/underpillar.git
 git clone https://review.gerrithub.io/ingwarr/salt-dnsmasq
@@ -37,23 +38,23 @@ git clone https://review.gerrithub.io/ingwarr/salt-tftpd-xinetd
 git clone https://review.gerrithub.io/ingwarr/salt-nginx
 git clone https://review.gerrithub.io/ingwarr/salt-neutron
 git clone https://review.gerrithub.io/ingwarr/salt-keystone
-git clone https://gerrit.mcp.mirantis.net/salt-formulas/apache
-git clone https://gerrit.mcp.mirantis.net/salt-formulas/memcached
-git clone https://gerrit.mcp.mirantis.net/salt-formulas/mysql
-git clone https://gerrit.mcp.mirantis.net/salt-formulas/rabbitmq
+git clone https://github.com/salt-formulas/salt-formula-apache
+git clone https://github.com/salt-formulas/salt-formula-memcached
+git clone https://github.com/salt-formulas/salt-formula-mysql
+git clone https://github.com/salt-formulas/salt-formula-rabbitmq
 
 mkdir -p /srv/pillar/
 mkdir -p /srv/salt
 
 cd /srv/salt
 ln -s ${WORKDIR}/salt-dnsmasq/dnsmasq
-ln -s ${WORKDIR}/apache/apache
-ln -s ${WORKDIR}/mysql/mysql
-ln -s ${WORKDIR}/rabbitmq/rabbitmq
+ln -s ${WORKDIR}/salt-formula-apache/apache
+ln -s ${WORKDIR}/salt-formula-mysql/mysql
+ln -s ${WORKDIR}/salt-formula-rabbitmq/rabbitmq
 ln -s ${WORKDIR}/salt-ironic/ironic
 ln -s ${WORKDIR}/salt-neutron/neutron
 ln -s ${WORKDIR}/salt-tftpd-xinetd/tftpd
-ln -s ${WORKDIR}/memcached/memcached
+ln -s ${WORKDIR}/salt-formula-memcached/memcached
 ln -s ${WORKDIR}/salt-keystone/keystone
 ln -s ${WORKDIR}/salt-nginx/nginx
 
@@ -73,4 +74,8 @@ find /srv/pillar/ -type f -exec sed -i "s/==IRONIC_DHCP_POOL_NETMASK_PREFIX==/${
 find /srv/pillar/ -type f -exec sed -i "s/==IRONIC_ENABLE_KEYSTONE==/${IRONIC_ENABLE_KEYSTONE}/g" {} +
 find /srv/pillar/ -type f -exec sed -i "s/==DNSMASQ_DONT_USE_EXTERNAL_DNS==/${DNSMASQ_DONT_USE_EXTERNAL_DNS}/g" {} +
 
+echo "### Starting Ironic bootstrap, please wait 5-10 min ###"
+
 sudo salt-call --local  --state-output=mixed state.highstate
+
+echo "### Ironic bootstrap completed ###"
